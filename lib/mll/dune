@@ -9,34 +9,16 @@
 ;                                                                        ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(ocamllex Literal_lexer)
+(ocamllex Mll_lexer)
 
-(ocamllex Toplevel_lexer)
+(menhir
+ (infer false)
+ (flags --table)
+ (modules Mll_parser))
 
 (library
- (name ocamlformat_lib)
- (public_name ocamlformat-lib)
+ (name ocamlformat_mll)
+ (public_name ocamlformat-lib.mll)
  (flags
-  (:standard
-   -open
-   Ocamlformat_ocaml_common
-   -open
-   Ocamlformat_parser_extended
-   -open
-   Ocamlformat_stdlib
-   -open
-   Ocamlformat_format))
- (instrumentation
-  (backend bisect_ppx))
- (libraries
-  dune-build-info
-  ocaml-version
-  ocamlformat_format
-  ocamlformat_mll
-  ocamlformat_ocaml_common
-  ocamlformat_odoc_parser
-  ocamlformat_parser_extended
-  ocamlformat_parser_standard
-  ocamlformat_stdlib
-  ocp-indent.lib
-  uuseg.string))
+  (:standard -open Ocamlformat_ocaml_common))
+ (libraries menhirLib ocamlformat_ocaml_common))

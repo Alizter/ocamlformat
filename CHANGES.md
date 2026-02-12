@@ -15,6 +15,11 @@ profile. This started with version 0.26.0.
 
 ### Added
 
+- Support for formatting OCamllex (.mll) files (@alizter)
+  Files are auto-detected by extension or can be explicitly formatted with
+  `ocamlformat --mll myfile.mll`. The formatter preserves comments and handles
+  both `parse` and `shortest` matching modes.
+
 - Added option `letop-punning` (#2746, @WardBrian) to control whether
   punning is used in extended binding operators.
   For example, the code `let+ x = x in ...` can be formatted as

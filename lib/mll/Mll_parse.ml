@@ -9,17 +9,20 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type t =
-  | Structure
-  | Signature
-  | Use_file
-  | Core_type
-  | Module_type
-  | Expression
-  | Pattern
-  | Repl_file
-  | Documentation
-  | Mll_file
+(** Parser entry point for OCamllex (.mll) files *)
 
-val of_fname : string -> t option
-(** The expected syntax of a file given its name. *)
+exception Parse_error of string * Location.t
+
+let parse ~input_name source =
+  let lexbuf = Lexing.from_string source in
+  Location.init_info lexbuf input_name ;
+  try Mll_parser.mll_file Mll_lexer.token lexbuf with
+  | Mll_lexer.Lexer_error (msg, loc) -> raise (Parse_error (msg, loc))
+  | Mll_parser.Error ->
+      let loc =
+        Location.
+          { loc_start= lexbuf.Lexing.lex_start_p
+          ; loc_end= lexbuf.Lexing.lex_curr_p
+          ; loc_ghost= false }
+      in
+      raise (Parse_error ("syntax error", loc))

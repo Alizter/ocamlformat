@@ -9,17 +9,11 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type t =
-  | Structure
-  | Signature
-  | Use_file
-  | Core_type
-  | Module_type
-  | Expression
-  | Pattern
-  | Repl_file
-  | Documentation
-  | Mll_file
+(** Parser entry point for OCamllex (.mll) files *)
 
-val of_fname : string -> t option
-(** The expected syntax of a file given its name. *)
+exception Parse_error of string * Location.t
+
+val parse : input_name:string -> string -> Mll_ast.mll_file
+(** [parse ~input_name source] parses an OCamllex file from [source].
+    @param input_name The filename to use for error messages.
+    @raise Parse_error if parsing fails. *)

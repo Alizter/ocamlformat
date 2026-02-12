@@ -1,0 +1,68 @@
+{
+open Lexing
+
+type token =
+  | INT of int
+  | FLOAT of float
+  | STRING of string
+  | IDENT of string
+  | LPAREN | RPAREN
+  | EOF
+
+let string_buffer = Buffer.create 256
+
+exception Lexer_error of string
+}
+
+let newline = '\r'? '\n'
+let blank = [' ' '\t']+
+let digit = ['0'-'9']
+let letter = ['a'-'z' 'A'-'Z' '_']
+let ident = letter (letter | digit)*
+let integer = digit+
+let decimal = digit+ '.' digit*
+let exponent = ['e' 'E'] ['+' '-']? digit+
+let float_literal = (decimal | digit+ exponent | decimal exponent)
+
+rule token = parse
+  | newline { new_line lexbuf; token lexbuf }
+  | blank { token lexbuf }
+  | "(*" { comment 0 lexbuf; token lexbuf }
+  | '"' { Buffer.clear string_buffer; string lexbuf }
+  | integer as n { INT (int_of_string n) }
+  | float_literal as f { FLOAT (float_of_string f) }
+  | ident as id { IDENT id }
+  | '(' { LPAREN }
+  | ')' { RPAREN }
+  | eof { EOF }
+  | _ as c { raise (Lexer_error (Printf.sprintf "unexpected char: %c" c)) }
+
+and comment depth = parse
+  | "*)" { if depth = 0 then () else comment (depth - 1) lexbuf }
+  | "(*" { comment (depth + 1) lexbuf }
+  | newline { new_line lexbuf; comment depth lexbuf }
+  | eof { raise (Lexer_error "unterminated comment") }
+  | _ { comment depth lexbuf }
+
+and string = parse
+  | '"' { STRING (Buffer.contents string_buffer) }
+  | '\\' 'n' { Buffer.add_char string_buffer '\n'; string lexbuf }
+  | '\\' 't' { Buffer.add_char string_buffer '\t'; string lexbuf }
+  | '\\' '"' { Buffer.add_char string_buffer '"'; string lexbuf }
+  | '\\' '\\' { Buffer.add_char string_buffer '\\'; string lexbuf }
+  | newline
+    { new_line lexbuf; Buffer.add_char string_buffer '\n'; string lexbuf }
+  | eof { raise (Lexer_error "unterminated string") }
+  | _ as c { Buffer.add_char string_buffer c; string lexbuf }
+
+{
+let token_to_string = function
+  | INT n -> Printf.sprintf "INT(%d)" n
+  | FLOAT f -> Printf.sprintf "FLOAT(%f)" f
+  | STRING s -> Printf.sprintf "STRING(%S)" s
+  | IDENT s -> Printf.sprintf "IDENT(%s)" s
+  | LPAREN -> "LPAREN"
+  | RPAREN -> "RPAREN"
+  | EOF -> "EOF"
+}
+

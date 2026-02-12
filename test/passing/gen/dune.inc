@@ -3783,6 +3783,96 @@
  (deps .ocamlformat)
  (package ocamlformat)
  (action
+  (with-stdout-to lexer_charset.mll.stdout
+   (with-stderr-to lexer_charset.mll.stderr
+     (run %{bin:ocamlformat} --name lexer_charset.mll --margin-check %{dep:../tests/lexer_charset.mll})))))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_charset.mll.ref lexer_charset.mll.stdout)))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_charset.mll.err lexer_charset.mll.stderr)))
+
+(rule
+ (deps .ocamlformat)
+ (package ocamlformat)
+ (action
+  (with-stdout-to lexer_comments.mll.stdout
+   (with-stderr-to lexer_comments.mll.stderr
+     (run %{bin:ocamlformat} --name lexer_comments.mll --margin-check %{dep:../tests/lexer_comments.mll})))))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_comments.mll.ref lexer_comments.mll.stdout)))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_comments.mll.err lexer_comments.mll.stderr)))
+
+(rule
+ (deps .ocamlformat)
+ (package ocamlformat)
+ (action
+  (with-stdout-to lexer_complex.mll.stdout
+   (with-stderr-to lexer_complex.mll.stderr
+     (run %{bin:ocamlformat} --name lexer_complex.mll --margin-check %{dep:../tests/lexer_complex.mll})))))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_complex.mll.ref lexer_complex.mll.stdout)))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_complex.mll.err lexer_complex.mll.stderr)))
+
+(rule
+ (deps .ocamlformat)
+ (package ocamlformat)
+ (action
+  (with-stdout-to lexer_shortest.mll.stdout
+   (with-stderr-to lexer_shortest.mll.stderr
+     (run %{bin:ocamlformat} --name lexer_shortest.mll --margin-check %{dep:../tests/lexer_shortest.mll})))))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_shortest.mll.ref lexer_shortest.mll.stdout)))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_shortest.mll.err lexer_shortest.mll.stderr)))
+
+(rule
+ (deps .ocamlformat)
+ (package ocamlformat)
+ (action
+  (with-stdout-to lexer_simple.mll.stdout
+   (with-stderr-to lexer_simple.mll.stderr
+     (run %{bin:ocamlformat} --name lexer_simple.mll --margin-check %{dep:../tests/lexer_simple.mll})))))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_simple.mll.ref lexer_simple.mll.stdout)))
+
+(rule
+ (alias runtest)
+ (package ocamlformat)
+ (action (diff lexer_simple.mll.err lexer_simple.mll.stderr)))
+
+(rule
+ (deps .ocamlformat)
+ (package ocamlformat)
+ (action
   (with-stdout-to line_directives.ml.stdout
    (with-stderr-to line_directives.ml.stderr
      (with-accepted-exit-codes 1

@@ -28,6 +28,7 @@ type 'a t =
   | Pattern : pattern t
   | Repl_file : repl_file t
   | Documentation : Ocamlformat_odoc_parser.Ast.t t
+  | Mll_file : Ocamlformat_mll.Mll_ast.mll_file t
 
 type any_t = Any : 'a t -> any_t [@@unboxed]
 
@@ -41,6 +42,7 @@ let of_syntax = function
   | Pattern -> Any Pattern
   | Repl_file -> Any Repl_file
   | Documentation -> Any Documentation
+  | Mll_file -> Any Mll_file
 
 let equal (type a) (_ : a t) : a -> a -> bool = Poly.equal
 
@@ -55,6 +57,7 @@ let map (type a) (x : a t) (m : Ast_mapper.mapper) : a -> a =
   | Pattern -> m.pat m
   | Repl_file -> List.map ~f:(m.repl_phrase m)
   | Documentation -> Fn.id
+  | Mll_file -> Fn.id
 
 module Parse = struct
   let normalize_mapper ~ocaml_version ~preserve_beginend ~prefer_let_puns =
@@ -374,6 +377,7 @@ module Parse = struct
         let pos = (Location.curr lexbuf).loc_start in
         let pos = {pos with pos_fname= input_name} in
         Docstring.parse_file pos str
+    | Mll_file -> Ocamlformat_mll.Mll_parse.parse ~input_name str
 end
 
 module Printast = struct
@@ -382,6 +386,8 @@ module Printast = struct
   let use_file = Format.pp_print_list top_phrase
 
   let repl_file = Format.pp_print_list repl_phrase
+
+  let mll_file _fmt _mll = ()
 
   let ast (type a) : a t -> _ -> a -> _ = function
     | Structure -> implementation
@@ -393,6 +399,7 @@ module Printast = struct
     | Pattern -> pattern
     | Repl_file -> repl_file
     | Documentation -> Docstring.dump
+    | Mll_file -> mll_file
 end
 
 module Asttypes = struct

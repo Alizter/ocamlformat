@@ -5124,6 +5124,10 @@ let fmt_file (type a) ~ctx ~fmt_code ~debug (fragment : a Extended_ast.t)
       (* TODO: [source] and [cmts] should have never been computed when
          formatting doc. *)
       Fmt_odoc.fmt_ast c.conf ~fmt_code:c.fmt_code d
+  | Mll_file, mll ->
+      (* TODO: [source] and [cmts] should have never been computed when
+         formatting mll. *)
+      Fmt_mll.fmt_mll_file mll
 
 let fmt_parse_result conf ~debug ast_kind ast source comments
     ~set_margin:set_margin_p ~fmt_code =

@@ -28,6 +28,7 @@ type 'a t =
   (* not implemented *)
   | Repl_file : unit t
   | Documentation : unit t
+  | Mll_file : unit t
 
 type any_t = Any : 'a t -> any_t [@@unboxed]
 

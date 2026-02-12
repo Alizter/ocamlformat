@@ -25,6 +25,7 @@ type 'a t =
   (* not implemented *)
   | Repl_file : unit t
   | Documentation : unit t
+  | Mll_file : unit t
 
 type any_t = Any : 'a t -> any_t [@@unboxed]
 
@@ -38,6 +39,7 @@ let of_syntax = function
   | Pattern -> Any Pattern
   | Repl_file -> Any Repl_file
   | Documentation -> Any Documentation
+  | Mll_file -> Any Mll_file
 
 let equal (type a) (_ : a t) : a -> a -> bool = Poly.equal
 
@@ -57,6 +59,7 @@ let map (type a) (x : a t) (m : Ast_mapper.mapper) : a -> a =
   | Pattern -> m.pat m
   | Repl_file -> Fn.id
   | Documentation -> Fn.id
+  | Mll_file -> Fn.id
 
 module Parse = struct
   let ast (type a) (fg : a t) ~ocaml_version ~input_name str : a =
@@ -75,6 +78,7 @@ module Parse = struct
     | Pattern -> Parse.pattern ~ocaml_version lexbuf
     | Repl_file -> ()
     | Documentation -> ()
+    | Mll_file -> ()
 end
 
 module Printast = struct
@@ -92,4 +96,5 @@ module Printast = struct
     | Pattern -> pattern 0
     | Repl_file -> fun _ _ -> ()
     | Documentation -> fun _ _ -> ()
+    | Mll_file -> fun _ _ -> ()
 end

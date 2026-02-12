@@ -1,0 +1,11 @@
+{
+(* Test shortest matching mode *)
+type token = WORD of string | EOF
+}
+
+let letter = ['a'-'z' 'A'-'Z']
+
+rule token = shortest
+  | letter+ as w { WORD w }
+  | eof { EOF }
+

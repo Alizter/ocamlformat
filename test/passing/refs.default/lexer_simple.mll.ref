@@ -1,0 +1,12 @@
+{
+open Parser
+}
+
+let digit = ['0'-'9']
+let letter = ['a'-'z' 'A'-'Z']
+
+rule token = parse
+  | digit+ { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | letter+ { IDENT (Lexing.lexeme lexbuf) }
+  | eof { EOF }
+
